@@ -5,7 +5,7 @@ import java.util.*;
 public class Main {
 	
 	public List<Variables> variableList = new ArrayList<Variables>(); //Creates a list of Variables objects
-	public List<Commands> commandList = new ArrayList<Commands>();
+	public List<Commands> globalCommandList = new ArrayList<Commands>();
 	public String fileLocation;
 	
 	public String getFile() {
@@ -61,15 +61,12 @@ public class Main {
 			} else if (line.startsWith("decr")) {
 				command = "decr";
 				name = line.substring(5, line.indexOf(';'));
-			} else if (line.startsWith("end")) {
-				command = "end";
-				name = null;
+			} else if (line.startsWith("while")) {
+				command = "while";
+				name = line.substring(6, line.indexOf(" not"));
 			}
-			
 			//Check if the variable exists, and add to the list if not, then add the command to the list.
-			if (name != null) {
-				this.checkVariableExists(name);
-			}
+			this.checkVariableExists(name);
 			this.commandList.add(new Commands(command, name));
 		}
 		br.close();
@@ -77,11 +74,6 @@ public class Main {
 	
 	public void executeCommands() {
 		for (Commands command : this.commandList) {
-			if (command.command.equals("end")) {
-				System.out.println("Program has been exited. Final variable values:");
-				this.printVariables();
-				System.exit(0);
-			}
 			System.out.println(command.operand + " was " + command.command + "ed");
 			for (Variables var : this.variableList) {
 				if (var.name.equals(command.operand)) {
