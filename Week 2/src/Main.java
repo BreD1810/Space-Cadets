@@ -8,29 +8,34 @@ public class Main {
 	public List<Commands> commandList = new ArrayList<Commands>();
 	public String fileLocation;
 	
-	public void locateFile() {
+	public String getFile() {
 		//Get the user's file location.
-		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			System.out.println("Enter the file location:");
-			this.fileLocation = br.readLine();
-		} catch (IOException ioe) {
-			System.out.println("Please enter a correct filepath.");
-		}
+		boolean complete = false;
+		String tempLocation = null;
 		
-		//Test if the file exists.
-		File testFile = new File(this.fileLocation);
-		if (testFile.exists()) {
-			System.out.println("File verified");
-			this.fileLocation = this.fileLocation.replace("\\", "\\" + "\\"); //Has to be done due to literals in strings
+		while (complete == false) {
+			try {
+				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				System.out.println("Enter the file location:");
+				tempLocation = br.readLine();
+			} catch (IOException ioe) {
+				System.out.println("Please enter a correct filepath.");
+			}
+			
+			//Test if the file exists.
+			File testFile = new File(tempLocation);
+			if (testFile.exists()) {
+				System.out.println("File verified");
+				complete = true;
+			}
+			else {
+				System.out.println("File doesn't exist");
+			}
 		}
-		else {
-			System.out.println("File doesn't exist");
-			this.fileLocation = null;
-		}
+		return tempLocation.replace("\\", "\\" + "\\");
 	}
 	
-	public boolean checkExists(String name) {
+	public boolean checkVariableExists(String name) {
 		
 		for (Variables var : this.variableList) {
 			if (var.name.equals(name)) {
@@ -63,7 +68,7 @@ public class Main {
 			
 			//Check if the variable exists, and add to the list if not, then add the command to the list.
 			if (name != null) {
-				this.checkExists(name);
+				this.checkVariableExists(name);
 			}
 			this.commandList.add(new Commands(command, name));
 		}
@@ -105,9 +110,7 @@ public class Main {
 		Main myProgram = new Main();
 		
 		//Get a file from the user.
-		while(myProgram.fileLocation == null) {
-			myProgram.locateFile();
-		}
+		myProgram.fileLocation = myProgram.getFile();
 		
 		//Read from the file.
 		System.out.println("Reading Commands");
