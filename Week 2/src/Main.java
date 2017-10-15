@@ -98,6 +98,8 @@ public class Main {
 		
 		//Read and execute commands.
 		
+		//TODO: Have read method return a command object, move while code into the readCommand func.
+		
 		String line;
 		while((line = myProgram.br.readLine()) != null) {
 			if (line.startsWith("while")) {
