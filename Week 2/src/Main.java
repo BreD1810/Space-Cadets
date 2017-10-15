@@ -61,6 +61,41 @@ public class Main {
 			command = "decr";
 			name = line.substring(5, line.indexOf(';'));
 			this.executeCommands(new Commands(command, name));
+		}else if (line.startsWith("while")) {
+			String variable, targetValue;
+			variable = line.substring(6, line.indexOf(" not"));
+			targetValue = line.substring(line.indexOf("not") + 4, line.indexOf("do") - 1);
+			List<Commands> commandList = new ArrayList<Commands>();
+			String whileLine;
+	
+			while (!(whileLine = this.br.readLine()).equals("end;")) {
+				String whileCommand = null, whileName = null;
+				if(whileLine.startsWith("clear")) {
+					whileCommand = "clear";
+					whileName = whileLine.substring(6, whileLine.indexOf(';'));
+				} else if (whileLine.startsWith("incr")) {
+					whileCommand = "incr";
+					whileName = whileLine.substring(5, whileLine.indexOf(';'));
+				} else if (whileLine.startsWith("decr")) {
+					whileCommand = "decr";
+					whileName = whileLine.substring(5, whileLine.indexOf(';'));
+				}
+				commandList.add(new Commands(whileCommand, whileName));
+			}
+			
+			//Get array index for the variable.
+			int indexOfVariable = 1;
+			for (int i = 0; i < this.variableList.size(); i++) {
+				if (this.variableList.get(i).name.equals(variable)) {
+					indexOfVariable = i;
+				}
+			}
+			
+			do {
+				for (Commands loopCommand : commandList) {
+					this.executeCommands(loopCommand);
+				}
+			} while ((this.variableList.get(indexOfVariable)).value != Integer.parseInt(targetValue));
 		}
 	}
 	
@@ -96,48 +131,9 @@ public class Main {
 		myProgram.fileLocation = myProgram.getFile();
 		myProgram.br = new BufferedReader(new FileReader(myProgram.fileLocation));
 		
-		//Read and execute commands.
-		
-		//TODO: Have read method return a command object, move while code into the readCommand func.
-		
+		//Read and execute commands.		
 		String line;
 		while((line = myProgram.br.readLine()) != null) {
-			if (line.startsWith("while")) {
-				String variable, targetValue;
-				variable = line.substring(6, line.indexOf(" not"));
-				targetValue = line.substring(line.indexOf("not") + 4, line.indexOf("do") - 1);
-				List<Commands> commandList = new ArrayList<Commands>();
-				String whileLine;
-		
-				while (!(whileLine = myProgram.br.readLine()).equals("end;")) {
-					String command = null, name = null;
-					if(whileLine.startsWith("clear")) {
-						command = "clear";
-						name = whileLine.substring(6, whileLine.indexOf(';'));
-					} else if (whileLine.startsWith("incr")) {
-						command = "incr";
-						name = whileLine.substring(5, whileLine.indexOf(';'));
-					} else if (whileLine.startsWith("decr")) {
-						command = "decr";
-						name = whileLine.substring(5, whileLine.indexOf(';'));
-					}
-					commandList.add(new Commands(command, name));
-				}
-				
-				//Get array index for the variable.
-				int indexOfVariable = 1;
-				for (int i = 0; i < myProgram.variableList.size(); i++) {
-					if (myProgram.variableList.get(i).name.equals(variable)) {
-						indexOfVariable = i;
-					}
-				}
-				
-				do {
-					for (Commands loopCommand : commandList) {
-						myProgram.executeCommands(loopCommand);
-					}
-				} while ((myProgram.variableList.get(indexOfVariable)).value != Integer.parseInt(targetValue));
-			}
 			myProgram.readCommands(line);
 		}
 		myProgram.br.close();
