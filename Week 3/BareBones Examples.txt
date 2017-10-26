@@ -1,0 +1,35 @@
+//This is a comment ;)
+index=20;
+clear countUp;
+clear modCounter;
+zero = 0;
+while index not 0 do;
+decr index;
+incr countUp;
+modResultI = modulo(countUp, 3);
+modResultII = modulo(countUp, 5);
+if modResultI = zero then;
+incr modCounter;
+else;
+if modResultII = zero then;
+incr modCounter;
+else;
+endIf;
+endIf;
+end;
+base = 4;
+index = raiseToPower(base, base-2);
+complexResult = ((index - base) * 6 + 2) % (8/base + 1);
+
+func modulo(mainNumber, modNumber):     //Performs a modulo function.
+	x = mainNumber%modNumber;
+	return x;
+fEnd;
+	
+func raiseToPower(input, exponent):     //Raises the input to the power of the exponent.
+	while exponent not 0 do;
+	input = input * input;
+	decr exponent;
+	end;
+	return input;
+fEnd;
