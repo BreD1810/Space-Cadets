@@ -1,50 +1,72 @@
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.net.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Server extends Thread{
 
-    static ServerSocket server;
-    static Socket connection;
+    ServerSocket serverSocket;
+    Socket connection;
+    static ArrayList<Socket> socketList = new ArrayList();
+
+    public Server(Socket clientSocket) {
+        this.connection = clientSocket;
+    }
 
     public void run(){
-
+        //Runs for a new thread - receive and send messages.
         try
         {
-            //Establish the server host
-            server = new ServerSocket(1337, 1, InetAddress.getLocalHost());
-
-            //Wait for a connecting client
-            System.out.println("Waiting for client connection...");
-            connection = server.accept();
-            System.out.println("Client connection accepted!");
-
+            //Create input stream for the threads client
             DataInputStream inputStream = new DataInputStream(connection.getInputStream());
+
+            //Establish client name
             String clientName = inputStream.readUTF();
 
-            //Infinite loop so the server never closes
+            //Infinitely listen for incoming messages
             while (true) {
                 String message = inputStream.readUTF();
                 System.out.println(clientName + ": " + message);
+
+                //Loop through all of the sockets and send the message to them
+                for (Socket socket:socketList)
+                {
+                    DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                    outputStream.writeUTF(clientName + ": " + message);
+                }
             }
         }
         catch (SocketException se)
         {
-            System.out.println("Connection lost...");
-            System.exit(0);
+            System.out.println("Connection lost in thread " + Thread.currentThread().getId() + "...");
+            Thread.currentThread().interrupt();
         }
         catch (IOException ioe)
         {
-
+            System.out.println("IOException");
+            Thread.currentThread().interrupt();
         }
     }
 
 
     public static void main(String[] args) throws IOException {
 
-        Server serverObj = new Server();
-        serverObj.start();
-        //TODO: Figure out multiple clients.
+        //Establish the server host
+        Server serverObj = new Server(new Socket());
+        serverObj.serverSocket = new ServerSocket(1337, 1, InetAddress.getLocalHost());
+
+        //Infinite loop to accept multiple clients
+        while (true) {
+            //Wait for a connecting client
+            serverObj.connection = serverObj.serverSocket.accept();
+
+            //Start a new thread to listen for messages
+            (new Server(serverObj.connection)).start();
+
+            //Add the socket to the list so it can receive other clients messages.
+            socketList.add(serverObj.connection);
+        }
 
     }
 

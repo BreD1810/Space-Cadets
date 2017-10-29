@@ -1,20 +1,23 @@
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
-public class Client {
+public class Client extends Thread{
 
-    static Socket client;
+    Socket client;
+    String name = null;
+
+    Client(Socket socket, String name) {
+        this.client = socket;
+        this.name = name;
+    }
 
     private String setName() {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Please enter your name:");
-        String name = null;
+
         while (name == null)
         {
             try
@@ -29,22 +32,43 @@ public class Client {
         return name;
     }
 
+    public void run() {
+        //Listen for messages on an infinite loop
+        while (true) {
+            try {
+                DataInputStream inputStream = new DataInputStream(client.getInputStream());
+                String receivedMessage = inputStream.readUTF();
+                if (!(receivedMessage.startsWith(name + ":")))
+                {
+                    System.out.println(receivedMessage);
+                }
+                //System.out.println(receivedMessage);
+            } catch (IOException ioe) {
+                System.out.println("Server connection has been lost...");
+                System.exit(0);
+            }
+        }
+    }
+
     public static void main(String[] args) throws IOException {
-        Client chatClient = new Client();
+
         //Connect to the server
         try
         {
-            client = new Socket(InetAddress.getLocalHost(), 1337);
-            DataOutputStream messageStream = new DataOutputStream(client.getOutputStream());
-            messageStream.writeUTF(chatClient.setName()); //Establish client name
+            Client chatClient = new Client(new Socket(InetAddress.getLocalHost(), 1337), null);
+
+            DataOutputStream outputStream = new DataOutputStream(chatClient.client.getOutputStream());
+            outputStream.writeUTF(chatClient.setName()); //Establish client name
             System.out.println("Connection established!");
 
-            //Infinite loop checking for messages sent.
+            //Separate thread for listening for messages
+            (new Client(chatClient.client, chatClient.name)).start();
+
+            //Infinite loop for sending messages.
             while (true) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
                 String message = br.readLine();
-                //
-                messageStream.writeUTF(message);
+                outputStream.writeUTF(message);
             }
         }
         catch (SocketException se)
