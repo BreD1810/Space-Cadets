@@ -2,7 +2,6 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
 
 public class Client extends Thread{
 
@@ -38,11 +37,12 @@ public class Client extends Thread{
             try {
                 DataInputStream inputStream = new DataInputStream(client.getInputStream());
                 String receivedMessage = inputStream.readUTF();
-                if (!(receivedMessage.startsWith(name + ":")))
+                System.out.println(receivedMessage);
+                //End session if the client already exists
+                if (receivedMessage.equals("Client with that name already exists."))
                 {
-                    System.out.println(receivedMessage);
+                    System.exit(0);
                 }
-                //System.out.println(receivedMessage);
             } catch (IOException ioe) {
                 System.out.println("Server connection has been lost...");
                 System.exit(0);
@@ -52,13 +52,15 @@ public class Client extends Thread{
 
     public static void main(String[] args) throws IOException {
 
-        //Connect to the server
         try
         {
+            //Required to stop the server from getting nullpointers when checking name (connection accepted before name was set)
+            Client tempClient = new Client(null, null);
+            //Determine clients name anc connect to server using that name
+            String name = tempClient.setName();
             Client chatClient = new Client(new Socket(InetAddress.getLocalHost(), 1337), null);
-
             DataOutputStream outputStream = new DataOutputStream(chatClient.client.getOutputStream());
-            outputStream.writeUTF(chatClient.setName()); //Establish client name
+            outputStream.writeUTF(name);
             System.out.println("Connection established!");
 
             //Separate thread for listening for messages
