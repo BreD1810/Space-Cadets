@@ -36,10 +36,40 @@ public class Server extends Thread{
                     {
                         outputStream.writeUTF("PM from " + senderName + ": " + pmMessage);
                     }
-
                 }
             }
 
+        }
+        catch (IOException ioe)
+        {
+            System.out.println("IOException to " + senderName);
+            int index = socketNames.indexOf(senderName);
+            socketNames.remove(index);
+            socketList.remove(index);
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    public void listUsers(String senderName)
+    {
+        //List all of the users connected to the server
+        try {
+            for (int i = 0; i < socketList.size(); i++)
+            {
+                DataOutputStream outputStream = new DataOutputStream(this.socketList.get(i).getOutputStream());
+                if (senderName.equals(this.socketNames.get(i)))
+                {
+                    String clientList = "Connected users: ";
+                    //Add all connected users
+                    for (String name:socketNames)
+                    {
+                        clientList = clientList.concat(name + ", ");
+                    }
+                    //Send message
+                    outputStream.writeUTF(clientList);
+                }
+
+            }
         }
         catch (IOException ioe)
         {
@@ -72,6 +102,7 @@ public class Server extends Thread{
                 }
             }
             socketNames.add(clientName);
+            System.out.println("Connection established to " + clientName);
 
             //Infinitely listen for incoming messages
             while (true) {
@@ -82,6 +113,10 @@ public class Server extends Thread{
                 if (message.startsWith("/pm"))
                 {
                     sendPM(clientName, message);
+                }
+                else if (message.equals("/list"))
+                {
+                    listUsers(clientName);
                 }
                 else
                 {
