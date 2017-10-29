@@ -1,0 +1,38 @@
+Extending the Bare Bones interpreter.
+
+
+Central command has been impressed with your work and you have been assigned you a new mission. Your barebones interpreter is being repurposed to calculate enemy assets and estimate resource allocation. Knowledge is power and we must prevail.
+
+Last week we looked at Bare Bones, the simple language that Brookshear uses in his book, 'Computer Science: an Overview'. Last week's challenge was to write an interpreter for Bare Bones that could handle simple programs.
+
+This week I want you to think about how you might extend the Bare Bones language itself. What features do you miss the most?
+
+Examples:
+
+    Comments
+    Simple operators (+, -, /, *)
+    if/else statements
+    Sub routines
+    Structures 
+
+Extend your interpreter with whatever you think is important, try and keep the syntax consistent. Make sure you document your language extensions.
+
+This exercise can be as complex or as simple as you like. If you feel a bit uncertain then have a go at the first two points, if you feel a bit more confident then try one of the last three. Make sure that you write and upload a demonstration Bare Bones program that uses your extension. 
+
+
+
+Extensions:
+
+Rather than writing the next C++ I'd like you to use any extra time you have to repeat your efforts to extend the Bare Bones language...but with someone else's interpreter. If you didn't get round to creating your own interpreter last week then this may be your only choice anyway!
+
+Make sure you create a new page on the Wiki to represent your extensions (don't go writing all over their original Wiki pages) but you might like to add a link to your extensions at the bottom of their original page.
+
+Use this exercise as a chance to give them some constructive criticism on the design of their interpreter. But play nice! 
+
+
+
+Variations:
+
+Crikey - still here? If you're still not bored, how about writing a visual programming environment for Bare Bones. Make it modular by allowing the programmer to connect up the inputs and outputs of fragments of Bare Bones code to make a working Bare Bones virtual machine!
+
+You could call it BlueBareBones. That should keep you busy :-) 
