@@ -70,6 +70,11 @@ public class Client extends Thread{
             while (true) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
                 String message = br.readLine();
+                if (message.equals("/quit"))
+                {
+                    System.out.println("Goodbye!");
+                    System.exit(0);
+                }
                 outputStream.writeUTF(message);
             }
         }
