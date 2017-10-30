@@ -75,7 +75,9 @@ public class Client extends Thread{
                     System.out.println("Goodbye!");
                     System.exit(0);
                 }
-                outputStream.writeUTF(message);
+                else {
+                    outputStream.writeUTF(message);
+                }
             }
         }
         catch (SocketException se)
