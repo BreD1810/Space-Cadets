@@ -3,7 +3,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Main extends JFrame implements ActionListener{
+public class Main extends JFrame implements ActionListener
+{
 
     private JButton radiusButton, offsetButton, loopButton, drawHypercycloid;
     private JPanel panel;
